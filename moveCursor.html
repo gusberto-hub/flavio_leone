@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: white;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        #besideMouse {
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 20;
+            height: 16px;
+            width: 16px;
+            /* transform: translateX(0) translateY(0%); */
+            /* transition: transform 100ms linear; */
+            pointer-events: none;
+            border: 4px solid white;
+            border-radius: 50%;
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="besideMouse"></div>
+
+    <img src="./content/1_projects/1_index/4_gad-2021/velvet-volume_0015.jpg" alt="">
+
+
+    <script>
+        const cursorText = document.querySelector("#besideMouse p");
+        const customCursor = document.querySelector('#besideMouse')
+        document.onmousemove = (e) => {
+            let mousePosition = {
+                x: e.clientX,
+                y: e.clientY,
+            };
+
+            let offSet = {
+                x: window.scrollX,
+                y: window.scrollY,
+            };
+
+            customCursor.style.transform = `translateX(${mousePosition.x + offSet.x + "px"}) translateY(${mousePosition.y + offSet.y + "px"})`;
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+User-agent: *
+disallow: /kirby/
+disallow: /site/
+allow: /media/
+
+Sitemap: http://www.flavioleone.ch/sitemap.xml
+Sitemap: https://www.flavioleone.ch/sitemap.xml
+

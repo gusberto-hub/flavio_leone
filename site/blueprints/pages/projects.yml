@@ -1,0 +1,8 @@
+title: Index
+
+# tabs:
+#   commissions:
+#     label: Commissions
+#     extends: layouts/commissions
+
+extends: layouts/personal

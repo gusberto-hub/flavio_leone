@@ -1,0 +1,7 @@
+title: File
+preset: files
+
+fields:
+  alt:
+    label: Alt Text
+    type: text

@@ -1,0 +1,26 @@
+sections:
+  commissions:
+    headline: published
+    type: pages
+    layout: cards
+    size: small
+    image:
+      query: page.images.sortBy("sort").first
+      cover: false
+      ratio: 1/1.33
+      back: black
+    parent: site.find("projects/commissions")
+    status: listed
+
+  commissions_unlisted:
+    headline: Unlisted
+    type: pages
+    parent: site.find("projects/commissions")
+    status: unlisted
+
+  commissions_drafts:
+    headline: Drafts
+    type: pages
+    parent: site.find("projects/commissions")
+    status: draft
+    template: project
