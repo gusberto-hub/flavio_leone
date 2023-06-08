@@ -7,90 +7,111 @@ use Exception;
 
 /**
  * A collection of items
+ * @since 3.5.0
  *
  * @package   Kirby Cms
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      https://getkirby.com
- * @copyright Bastian Allgeier GmbH
+ * @copyright Bastian Allgeier
  * @license   https://getkirby.com/license
  */
 class Items extends Collection
 {
-    const ITEM_CLASS = '\Kirby\Cms\Item';
+	public const ITEM_CLASS = Item::class;
 
-    /**
-     * @var array
-     */
-    protected $options;
+	protected Field|null $field;
 
-    /**
-     * @var \Kirby\Cms\ModelWithContent
-     */
-    protected $parent;
+	/**
+	 * All registered items methods
+	 *
+	 * @var array
+	 */
+	public static $methods = [];
 
-    /**
-     * Constructor
-     *
-     * @param array $objects
-     * @param array $options
-     */
-    public function __construct($objects = [], array $options = [])
-    {
-        $this->options = $options;
-        $this->parent  = $options['parent'] ?? site();
+	/**
+	 * @var array
+	 */
+	protected $options;
 
-        parent::__construct($objects, $this->parent);
-    }
+	/**
+	 * @var \Kirby\Cms\ModelWithContent
+	 */
+	protected $parent;
 
-    /**
-     * Creates a new item collection from a
-     * an array of item props
-     *
-     * @param array $items
-     * @param array $params
-     * @return \Kirby\Cms\Items
-     */
-    public static function factory(array $items = null, array $params = [])
-    {
-        $options = array_merge([
-            'options' => [],
-            'parent'  => site(),
-        ], $params);
+	/**
+	 * Constructor
+	 *
+	 * @param array $objects
+	 * @param array $options
+	 */
+	public function __construct($objects = [], array $options = [])
+	{
+		$this->options = $options;
+		$this->parent  = $options['parent'] ?? App::instance()->site();
+		$this->field   = $options['field']  ?? null;
 
-        if (empty($items) === true || is_array($items) === false) {
-            return new static();
-        }
+		parent::__construct($objects, $this->parent);
+	}
 
-        if (is_array($options) === false) {
-            throw new Exception('Invalid item options');
-        }
+	/**
+	 * Creates a new item collection from a
+	 * an array of item props
+	 *
+	 * @param array $items
+	 * @param array $params
+	 * @return \Kirby\Cms\Items
+	 */
+	public static function factory(array $items = null, array $params = [])
+	{
+		$options = array_merge([
+			'field'   => null,
+			'options' => [],
+			'parent'  => App::instance()->site(),
+		], $params);
 
-        // create a new collection of blocks
-        $collection = new static([], $options);
+		if (empty($items) === true || is_array($items) === false) {
+			return new static();
+		}
 
-        foreach ($items as $params) {
-            if (is_array($params) === false) {
-                continue;
-            }
+		if (is_array($options) === false) {
+			throw new Exception('Invalid item options');
+		}
 
-            $params['options']  = $options['options'];
-            $params['parent']   = $options['parent'];
-            $params['siblings'] = $collection;
-            $class = static::ITEM_CLASS;
-            $item  = $class::factory($params);
-            $collection->append($item->id(), $item);
-        }
+		// create a new collection of blocks
+		$collection = new static([], $options);
 
-        return $collection;
-    }
+		foreach ($items as $params) {
+			if (is_array($params) === false) {
+				continue;
+			}
 
-    /**
-     * Convert the items to an array
-     *
-     * @return array
-     */
-    public function toArray(Closure $map = null): array
-    {
-        return array_values(parent::toArray($map));
-    }
+			$params['field']    = $options['field'];
+			$params['options']  = $options['options'];
+			$params['parent']   = $options['parent'];
+			$params['siblings'] = $collection;
+			$class = static::ITEM_CLASS;
+			$item  = $class::factory($params);
+			$collection->append($item->id(), $item);
+		}
+
+		return $collection;
+	}
+
+	/**
+	 * Returns the parent field if known
+	 */
+	public function field(): Field|null
+	{
+		return $this->field;
+	}
+
+	/**
+	 * Convert the items to an array
+	 *
+	 * @return array
+	 */
+	public function toArray(Closure $map = null): array
+	{
+		return array_values(parent::toArray($map));
+	}
 }

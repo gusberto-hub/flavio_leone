@@ -2,8 +2,8 @@
 
 namespace Kirby\Cms;
 
-use Kirby\Toolkit\Dir;
-use Kirby\Toolkit\F;
+use Kirby\Filesystem\Dir;
+use Kirby\Filesystem\F;
 
 /**
  * A collection of all available Translations.
@@ -14,65 +14,72 @@ use Kirby\Toolkit\F;
  * @package   Kirby Cms
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      https://getkirby.com
- * @copyright Bastian Allgeier GmbH
+ * @copyright Bastian Allgeier
  * @license   https://getkirby.com/license
  */
 class Translations extends Collection
 {
-    /**
-     * @param string $code
-     * @return void
-     */
-    public function start(string $code): void
-    {
-        F::move($this->parent->contentFile('', true), $this->parent->contentFile($code, true));
-    }
+	/**
+	 * All registered translations methods
+	 *
+	 * @var array
+	 */
+	public static $methods = [];
 
-    /**
-     * @param string $code
-     * @return void
-     */
-    public function stop(string $code): void
-    {
-        F::move($this->parent->contentFile($code, true), $this->parent->contentFile('', true));
-    }
+	/**
+	 * @param string $code
+	 * @return void
+	 */
+	public function start(string $code): void
+	{
+		F::move($this->parent->contentFile('', true), $this->parent->contentFile($code, true));
+	}
 
-    /**
-     * @param array $translations
-     * @return self
-     */
-    public static function factory(array $translations)
-    {
-        $collection = new static();
+	/**
+	 * @param string $code
+	 * @return void
+	 */
+	public function stop(string $code): void
+	{
+		F::move($this->parent->contentFile($code, true), $this->parent->contentFile('', true));
+	}
 
-        foreach ($translations as $code => $props) {
-            $translation = new Translation($code, $props);
-            $collection->data[$translation->code()] = $translation;
-        }
+	/**
+	 * @param array $translations
+	 * @return static
+	 */
+	public static function factory(array $translations)
+	{
+		$collection = new static();
 
-        return $collection;
-    }
+		foreach ($translations as $code => $props) {
+			$translation = new Translation($code, $props);
+			$collection->data[$translation->code()] = $translation;
+		}
 
-    /**
-     * @param string $root
-     * @param array $inject
-     * @return self
-     */
-    public static function load(string $root, array $inject = [])
-    {
-        $collection = new static();
+		return $collection;
+	}
 
-        foreach (Dir::read($root) as $filename) {
-            if (F::extension($filename) !== 'json') {
-                continue;
-            }
+	/**
+	 * @param string $root
+	 * @param array $inject
+	 * @return static
+	 */
+	public static function load(string $root, array $inject = [])
+	{
+		$collection = new static();
 
-            $locale      = F::name($filename);
-            $translation = Translation::load($locale, $root . '/' . $filename, $inject[$locale] ?? []);
+		foreach (Dir::read($root) as $filename) {
+			if (F::extension($filename) !== 'json') {
+				continue;
+			}
 
-            $collection->data[$locale] = $translation;
-        }
+			$locale      = F::name($filename);
+			$translation = Translation::load($locale, $root . '/' . $filename, $inject[$locale] ?? []);
 
-        return $collection;
-    }
+			$collection->data[$locale] = $translation;
+		}
+
+		return $collection;
+	}
 }
