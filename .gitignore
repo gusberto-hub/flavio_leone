@@ -48,3 +48,5 @@ Icon
 /site/config/.license
 
 content/1_projects
+
+node_modules
